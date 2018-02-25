@@ -1,0 +1,85 @@
+Mapper code:
+
+package org;
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper; 
+
+ 
+public class PatientMapper extends Mapper<Text,Text,Text,Text> {
+ 
+    private Text word = new Text();
+ 
+    public void map(Text key, Text value, Context context) throws IOException, InterruptedException
+    {
+        StringTokenizer itr = new StringTokenizer(value.toString(),",");
+        while (itr.hasMoreTokens())
+        {
+            word.set(itr.nextToken());
+            context.write(key, word);
+        }
+    }
+}
+
+Reducer Code:
+package org;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+import java.io.IOException;
+ 
+public class PatientReducer extends Reducer<Text, Text, Text, Text> {
+ 
+    private Text result = new Text();
+ 
+    @Override
+    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        String translations = "";
+ 
+        for (Text val : values) {
+            translations += "|" + val.toString();
+        }
+ 
+        result.set(translations);
+        context.write(key, result);
+    }
+}
+
+Driver Code:
+package org;
+
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text; 
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+
+ 
+public class PatientDriver {
+ 
+    public static void main(String[] args) throws Exception
+    {
+        Configuration conf = new Configuration();
+        Job job = new Job(conf, "Patientinfo");
+        job.setJarByClass(PatientDriver.class);
+        job.setMapperClass(PatientMapper.class);
+        job.setReducerClass(PatientReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+ 
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
+ 
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        FileInputFormat.addInputPath(job, new Path(args[0])); 
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        boolean result = job.waitForCompletion(true);
+        System.exit(result ? 0 : 1);
+    }
+}

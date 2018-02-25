@@ -1,0 +1,11 @@
+PIG Source code:
+
+//Loading data from HDFS to PIG and creating the schema
+A = LOAD '/user/hue/Patientinfo.csv' USING PigStorage(',') AS
+(DRGDefinition:chararray, ProviderId:int, ProviderName:chararray, ProviderStreetAddress:chararray, ProviderCity:chararray, ProviderState:chararray, ProviderZipCode:int, HospitalReferralRegionDescription:chararray, TotalDischarges:int, AverageCoveredCharges:int, AverageTotalPayments:int, AverageMedicarePayments:int);
+
+//Applying filter conditions
+B = FILTER A BY (TotalDischarges > 100);
+
+//Display the output
+DUMP B;

@@ -1,0 +1,33 @@
+HIVE Source code:
+
+//Table schema creation
+create table Patientinfo(DRGDefinition string,
+ProviderId string,
+ProviderName string,
+ProviderStreetAddress string,
+ProviderCity string,
+ProviderState string,
+ProviderZipCode string,
+HospitalReferralRegionDescription string,
+TotalDischarges string,
+AverageCoveredCharges string, 
+AverageTotalPayments string,
+AverageMedicarePayments string)
+row format delimited
+fields terminated by ',';
+
+//Loading the data from HDFS into table
+load data inpath '/user/hue/Patientinfo.csv' into table Patientinfo;
+
+//Querying the data.
+select * from Patientinfo;
+
+//Query to select a perticular state from diffrent state
+select * from Patientinfo where ProviderState = 'AZ';
+
+//Query to select a perticular city from diffrent city
+select * from Patientinfo where ProviderCity like 'DOTHAN';
+
+
+
+
