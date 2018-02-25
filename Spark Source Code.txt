@@ -1,0 +1,5 @@
+Spark using Python source code:
+
+rdd = sc.textFile("/FileStore/tables/y9p0n5601490966121118/Patientinfo.csv") //creation of object and reading the input file
+print rdd.collect() //command to print the output
+print rdd.take(4) // command to take only few records from entire output.
