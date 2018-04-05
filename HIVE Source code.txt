@@ -1,4 +1,4 @@
-HIVE Source code:
+HIVE Source code: 
 
 //Table schema creation
 create table Patientinfo(DRGDefinition string,
