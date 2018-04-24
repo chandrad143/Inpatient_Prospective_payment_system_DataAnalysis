@@ -1,5 +1,6 @@
 HIVE Source code: 
 
+
 //Table schema creation
 create table Patientinfo(DRGDefinition string,
 ProviderId string,
